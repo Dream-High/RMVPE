@@ -173,3 +173,17 @@ class DeepUnet(nn.Module):
         x = self.decoder(x, concat_tensors)
         return x
 
+      
+class DeepUnet0(nn.Module):
+    def __init__(self, kernel_size, n_blocks, en_de_layers=5, inter_layers=4, in_channels=1, en_out_channels=16):
+        super(DeepUnet0, self).__init__()
+        self.encoder = Encoder(in_channels, N_MELS, en_de_layers, kernel_size, n_blocks, en_out_channels)
+        self.intermediate = Intermediate(self.encoder.out_channel // 2, self.encoder.out_channel, inter_layers, n_blocks)
+        self.tf = TimbreFilter(self.encoder.latent_channels)
+        self.decoder = Decoder(self.encoder.out_channel, en_de_layers, kernel_size, n_blocks)
+
+    def forward(self, x):
+        x, concat_tensors = self.encoder(x)
+        x = self.intermediate(x)
+        x = self.decoder(x, concat_tensors)
+        return x
