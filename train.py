@@ -14,7 +14,7 @@ from evaluate import evaluate
 
 
 def train(alpha, gamma):
-    logdir = 'runs/Pitch_FL'+str(alpha)+'_'+str(gamma)
+    logdir = 'runs/Pitch_FL' + str(alpha) + '_' + str(gamma)
     seq_l = 2.55
 
     hop_length = 20
@@ -41,7 +41,7 @@ def train(alpha, gamma):
     writer = SummaryWriter(logdir)
 
     if resume_iteration is None:
-        model = nn.DataParallel(E2E(int(hop_length/1000*SAMPLE_RATE), 4, 1, (2, 2))).to(device)
+        model = nn.DataParallel(E2E(int(hop_length / 1000 * SAMPLE_RATE), 4, 1, (2, 2))).to(device)
         optimizer = torch.optim.Adam(model.parameters(), learning_rate)
         resume_iteration = 0
     else:
@@ -93,7 +93,7 @@ def train(alpha, gamma):
                         f.write(str(OA) + '\t')
                         f.write(str(VR) + '\t')
                         f.write(str(VFA) + '\n')
-                    torch.save(model.module, os.path.join(logdir, f'model-{i}.pt'))
+                    torch.save(model.module, os.path.join(logdir, f'model-1-{i}.pt'))
                     torch.save(optimizer.state_dict(), os.path.join(logdir, 'last-optimizer-state.pt'))
             model.train()
 
@@ -101,4 +101,9 @@ def train(alpha, gamma):
             break
 
 
-train(5, 0)
+alpha_list = [6, 7, 8, 9, 10]
+for alpha in alpha_list:
+    print('' * 250)
+    print(alpha)
+    print('' * 250)
+    train(alpha, 0)
